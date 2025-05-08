@@ -34,7 +34,6 @@ func pingMongo(ctx context.Context, client *mongo.Client, dsn string) (*mongo.Da
 }
 
 // MongoRepository struct of a mongo repository
-// Implements the Repository interface
 type MongoRepository struct {
 	DB         *mongo.Database
 	Collection *mongo.Collection
