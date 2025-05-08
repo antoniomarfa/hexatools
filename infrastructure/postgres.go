@@ -16,7 +16,6 @@ func ConnectPostgresDB(ctx context.Context, dsn string) (*sql.DB, error) {
 }
 
 func pingSql(ctx context.Context, db *sql.DB) (err error) {
-	// wait until db is ready
 	for start := time.Now(); time.Since(start) < (5 * time.Second); {
 		err = db.PingContext(ctx)
 		if err == nil {
