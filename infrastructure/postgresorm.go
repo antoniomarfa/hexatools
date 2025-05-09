@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -37,6 +38,10 @@ type PostgresRepositoryOrm struct {
 	DB *gorm.DB
 }
 
+var SharedTables = map[string]string{
+	"company": "travel",
+}
+
 func GetDBWithSchema(ctx context.Context, db *gorm.DB) *gorm.DB {
 	// Obtener el esquema desde el contexto
 	schemaVal, exists := ctx.Value("schema").(string)
@@ -44,7 +49,13 @@ func GetDBWithSchema(ctx context.Context, db *gorm.DB) *gorm.DB {
 		return db // Si no hay esquema, devolver la conexión por defecto
 	}
 
-	// Aplicar el esquema al contexto de la base de datos
-	return db.Session(&gorm.Session{
-		NewDB: true}).Exec("SET search_path TO " + schemaVal)
+	newDB := db.Session(&gorm.Session{NewDB: true})
+
+	// Ejecutar SET search_path en la nueva sesión, pero sin devolver el resultado de Exec
+	if err := newDB.Exec("SET search_path TO " + schemaVal).Error; err != nil {
+		// Puedes manejar el error aquí si lo deseas, o dejarlo pasar silenciosamente
+		fmt.Println("error al aplicar search_path:", err)
+	}
+
+	return newDB
 }
