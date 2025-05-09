@@ -46,6 +46,5 @@ func GetDBWithSchema(ctx context.Context, db *gorm.DB) *gorm.DB {
 
 	// Aplicar el esquema al contexto de la base de datos
 	return db.Session(&gorm.Session{
-		NewDB: true,
-	}).Exec("SET search_path TO ?", schemaVal)
+		NewDB: true}).Exec("SET search_path TO " + schemaVal)
 }
